@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personalized Messages</title>
+  <!-- Cartoonish font for a cute design -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="message-container">
+    <h2>Tell me what to fix, i'll fix</h2>
+    <form id="messageForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="9703aa4d-9868-49b0-9148-bca292f4e094">
+      <input type="text" id="name" name="name" placeholder=" Put My nickname  jo tune rakkha h " required>
+      <textarea id="message" name="message" placeholder=" Say everything , Gali , taunt , everything you have for me  " required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  
+    
+    <div id="messagesList"></div>
+    <a href="index.html" class="back-link">Back to Home</a>
+  </div>
+  
+</body>
+</html>

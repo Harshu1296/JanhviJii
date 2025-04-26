@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lyrics + Balloons</title>
+    <!-- Google Fonts & Font Awesome for music icon -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Video Background -->
+
+    <!-- Repeating Heading -->
+    
+
+    <video autoplay muted loop id="bgVideo"  preload="none">
+      <source
+        src="./pretty_her.mp4 (online-video-cutter.com).mp4"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Glassmorphism Music Icon Button -->
+    <button id="startButton" title="Play Music">
+      <i class="fa-solid fa-music"></i>
+    </button>
+
+    <!-- Hidden Audio -->
+    <audio
+      id="audio"
+      loop=""
+      src="./Blue-Yung-Kai (mp3cut.net).mp3"
+    ></audio>
+
+    <!-- Lyrics Container -->
+    <div
+      id="lyricsContainer"
+      
+      class="lyrics-container"
+    ></div>
+
+    <div id="apologyCard" class="glass-card">
+      <p>
+        Heyy Janhvi ,<br /><br />
+        I am truly sorry for my mistakes. You mean everything to me, and I
+        promise to always cherish and care for you. Please forgive me and let me
+        make things right , be myside i want my penguu back Please .
+        ( My intentions is to spend my life with u like  Ae-sun and Gwan-sik Please i request u Janhvi 🙏🏻. )
+      </p>
+    </div>
+
+    <!-- Balloon Container -->
+
+    <!-- Message Button (Centered at Bottom) -->
+    <a href="message.html" id="messageButton">Maaf me here</a>
+
+    <script >
+
+
+      /****************************************
+ *           LYRICS SETUP
+ ****************************************/
+const lyricsData = [
+  { time: 2.00, text: "It's stuck 🖇🫂 with you forever ♾️🫶🏻.... " },
+  { time: 3.40, text: "so promise 🤞🏻 you 🫵🏻𖠋♡𖠋  won't let it   " },
+  { time: 3.80, text: "go " },
+  { time: 6.40, text: "I'll trust the universe 🪐༘⋆ will " },
+  { time: 8.30, text: "always.... 🪄🪄 " },
+  { time: 10.60, text: "bring me to you  🖇🫂 👩‍❤️‍👨" },
+
+  { time: 12.15, text: "[Chorus ▶︎ •၊၊||၊|။|||| |].... " },
+    { time: 15.17, text: "I'll imagine we fell in love 🩵*🎐｡⊹🪻  " },
+    { time: 17.45, text: "I'll nap 🛋️ under " },
+    { time: 18.30, text: "moonlight ‧₊˚ ☁️⋅♡🪐༘⋆ skies  ⋆⭒˚.⋆🔭  with You 🫵🏻 <𝟑 " },
+    { time: 21.25, text: "I think 💭 I'll picture 📸 us 𐀪𐀪," },
+    { time: 23.27, text: " you with the waves ˖°𓇼🌊⋆🐚🫧 " },
+    { time: 25.29, text: "The ocean's ⋆｡ﾟ🌊｡  colors on your face ☁️🫧🦢🤍" },
+    { time: 30.10, text: "I'll leave 🫧🕊️ " },
+    { time: 31.14, text: "my heart 🫀 with your air ‧₊˚ ☁️⋅♡𓂃 🎐࣪ ."},
+    { time: 32.18, text: "So let me 🌻 fly 🤍🕊. ོ with you 🪻 " },
+    { time: 37.10, text: "Will you 🪻," },
+    { time: 38.15, text: "be 🫵🏻🎀" },
+    { time: 38.28, text: "forever ♾️♥️🫶🏻 with me 𖠋♡𖠋 🤞🏻  ?..." },
+    { time: 45.00, text: "Will you 💞?..." },
+    { time: 45.00, text: " I Love you Janhvi 🫶🏻💞..." }
+  ];
+
+
+
+  
+  const audio = document.getElementById('audio');
+  const startButton = document.getElementById('startButton');
+  const lyricsDiv = document.getElementById('lyricsContainer');
+  const balloonContainer = document.getElementById('balloonsContainer');
+  
+  let currentLyricIndex = 0;
+  let currentGroupCount = 0;  
+  let pendingLyric = null;    
+  let isFadingOut = false;    
+          // SPAWN & SPEED CONTROLS
+   
+  let spawnInterval = 2000;        let balloonIntervalId = null;    let currentFloatDuration = 8.0;  
+  
+  /****************************************
+   *           EVENT LISTENERS
+   ****************************************/
+  startButton.addEventListener('click', () => {
+    currentLyricIndex = 0;
+    lyricsDiv.innerHTML = "";
+    currentGroupCount = 0;
+    pendingLyric = null;
+    isFadingOut = false;
+  
+    // Jump audio to 5:41 (341s) and play
+    audio.currentTime = 341;
+    audio.play().catch(error => {
+      console.error("Audio playback failed:", error);
+    });
+  
+    if (balloonIntervalId) clearInterval(balloonIntervalId);
+    balloonIntervalId = setInterval(createBalloon, spawnInterval);
+  });
+  
+  audio.addEventListener('timeupdate', () => {
+    if (currentLyricIndex < lyricsData.length) {
+      const nextLyric = lyricsData[currentLyricIndex];
+      if (audio.currentTime >= nextLyric.time) {
+        processLyric(nextLyric);
+      }
+    }
+    
+    adjustBalloonSpeed(audio.currentTime);
+  });
+  
+  /****************************************
+   *   PROCESS LYRIC WITH GROUPING
+   ****************************************/
+  function processLyric(lyricObj) {
+    if (currentGroupCount < 3) {
+      appendLyric(lyricObj);
+      currentGroupCount++;
+      currentLyricIndex++;
+    } else {
+     
+      if (!isFadingOut) {
+        pendingLyric = lyricObj;
+        isFadingOut = true;
+        fadeOutCurrentGroup(() => {
+          
+          lyricsDiv.innerHTML = "";
+          currentGroupCount = 0;
+          isFadingOut = false;
+          if (pendingLyric) {
+            appendLyric(pendingLyric);
+            currentGroupCount++;
+            pendingLyric = null;
+            currentLyricIndex++;
+          }
+        });
+      }
+    }
+  }
+  
+ 
+    //  APPEND LYRIC (Fade or Typing Effect)
+  
+  function appendLyric(lyricObj) {
+    // Use typing effect for lyrics from time 354 onward; fade effect for earlier ones.
+    if (lyricObj.time >= 354) {
+      typeLyric(lyricObj.text);
+    } else {
+      displayFadeLyric(lyricObj.text);
+    }
+  }
+  
+  /****************************************
+   *   FADE OUT CURRENT GROUP
+   ****************************************/
+  function fadeOutCurrentGroup(callback) {
+    const children = Array.from(lyricsDiv.children);
+    children.forEach(child => child.classList.add('fade-out'));
+    // Wait for the fade-out animation to complete (0.8s) then call callback.
+    setTimeout(callback, 800);
+  }
+  
+  /****************************************
+   *   LYRICS DISPLAY (Fade Effect)
+   ****************************************/
+  function displayFadeLyric(text) {
+    const newEl = document.createElement('div');
+    newEl.className = 'lyric-line';
+    newEl.innerHTML = text.split('\n').join('<br>');
+    newEl.style.animation = 'fadeIn 0.8s ease forwards';
+    lyricsDiv.appendChild(newEl);
+  }
+  
+  /****************************************
+   *   LYRICS DISPLAY WITH TYPING EFFECT
+   ****************************************/
+  function typeLyric(text) {
+    const newEl = document.createElement('div');
+    newEl.className = 'lyric-line';
+    lyricsDiv.appendChild(newEl);
+    
+    let i = 0;
+    function typeNext() {
+      if (i < text.length) {
+        const char = text[i];
+        newEl.innerHTML += (char === "\n") ? "<br>" : char;
+        i++;
+        setTimeout(typeNext, 50); // Adjust typing speed if needed
+      } else {
+        newEl.style.animation = 'fadeIn 0.8s ease forwards';
+      }
+    }
+    typeNext();
+  }
+  
+  /****************************************
+   *         BALLOON CREATION
+   ****************************************/
+  function createBalloon() {
+    const balloonWrapper = document.createElement('div');
+    balloonWrapper.className = 'balloon';
+    balloonWrapper.style.animationDuration = currentFloatDuration + 's';
+  
+    const balloonShape = document.createElement('div');
+    balloonShape.className = 'balloon-shape';
+  
+    const balloonString = document.createElement('div');
+    balloonString.className = 'balloon-string';
+  
+    const randomHue = Math.floor(Math.random() * 360);
+    const randomSaturation = 80 + Math.floor(Math.random() * 20);
+    const randomLightness = 40 + Math.floor(Math.random() * 20);
+    const balloonColor = `hsl(${randomHue}, ${randomSaturation}%, ${randomLightness}%)`;
+  
+    balloonWrapper.dataset.color = balloonColor;
+    balloonShape.style.background =
+      `radial-gradient(circle at 30% 30%, #fff, ${balloonColor})`;
+    balloonWrapper.style.left = Math.floor(Math.random() * 90) + '%';
+  
+    balloonWrapper.appendChild(balloonShape);
+    balloonWrapper.appendChild(balloonString);
+    balloonContainer.appendChild(balloonWrapper);
+  
+    // Set auto-pop to occur between 1s and 3s.
+    const popTime = Math.random() * 2000 + 1000;
+    const autoPopTimer = setTimeout(() => popBalloon(balloonWrapper), popTime);
+  
+    balloonShape.addEventListener('click', () => {
+      clearTimeout(autoPopTimer);
+      popBalloon(balloonWrapper);
+    });
+  }
+  
+  /****************************************
+   *         BALLOON POP
+   ****************************************/
+  function popBalloon(balloonWrapper) {
+    if (!balloonWrapper.parentNode) return;
+    const rect = balloonWrapper.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    balloonWrapper.remove();
+  
+    const splash = document.createElement('div');
+    splash.className = 'splash';
+    splash.style.left = x + 'px';
+    splash.style.top = y + 'px';
+  
+    const color = balloonWrapper.dataset.color || '#00f';
+    splash.style.background = `radial-gradient(circle, ${color} 20%, transparent 70%)`;
+    const randomAngle = Math.floor(Math.random() * 360);
+    splash.style.transform = `translate(-50%, -50%) rotate(${randomAngle}deg)`;
+  
+    balloonContainer.appendChild(splash);
+    splash.addEventListener('animationend', () => splash.remove());
+  
+    // Trigger a confetti effect at the pop location.
+    triggerConfetti(x, y);
+  }
+  
+  /****************************************
+   *       DYNAMIC SPEED ADJUSTMENT
+   ****************************************/
+  function adjustBalloonSpeed(currentTime) {
+    const startTime = 341;
+    const endTime = 345;
+    if (currentTime < startTime) {
+      currentFloatDuration = 8.0;
+      return;
+    }
+    if (currentTime > endTime) {
+      currentFloatDuration = 4.0;
+      return;
+    }
+    const progress = (currentTime - startTime) / (endTime - startTime);
+    currentFloatDuration = 8.0 - 4.0 * progress;
+  }
+  
+          // CONFETTI EFFECT
+   
+  function triggerConfetti(x, y) {
+    for (let i = 0; i < 20; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      const hue = Math.floor(Math.random() * 360);
+      confetti.style.backgroundColor = `hsl(${hue}, 80%, 60%)`;
+      confetti.style.left = (x + (Math.random() * 50 - 25)) + 'px';
+      confetti.style.top = (y + (Math.random() * 50 - 25)) + 'px';
+      confetti.style.animationDelay = Math.random() * 0.5 + 's';
+      balloonContainer.appendChild(confetti);
+      confetti.addEventListener('animationend', () => confetti.remove());
+    }
+  }
+  
+    </script>
+  </body>
+</html>
